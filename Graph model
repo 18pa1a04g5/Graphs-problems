@@ -1,0 +1,72 @@
+#Number ofislands
+class Solution:
+    def numIslands(self, grid: List[List[str]]) -> int:
+        m,n,count = len(grid),len(grid[0]), 0
+        
+        def dfs(i,j):
+            if grid[i][j] == "0":
+                return 
+            else:
+                neigh = [(x,y) for (x,y) in ((i+1,j),(i-1,j),(i,j+1),(i,j-1))
+                         if 0<= x <m and 0<= y <n]
+                grid[i][j] = "0"
+                for i, j in neigh: 
+                    dfs(i,j)
+        
+        for i in range(m):
+            for j in range(n):
+                if grid[i][j] == "1":
+                    dfs(i,j)
+                    count += 1
+        return count
+
+
+#Flood fill
+class Solution:
+    def floodFill(self, image: List[List[int]], sr: int, sc: int, newColor: int) -> List[List[int]]:
+        oldColor = image[sr][sc]
+        if oldColor == newColor:
+            return image
+        def bfs(i,j):
+            if i<0 or j<0 or i>len(image)-1 or j>len(image[0])-1 or image[i][j]!=oldColor:
+                return
+            image[i][j]=newColor
+            bfs(i+1,j)
+            bfs(i-1,j)
+            bfs(i,j+1)
+            bfs(i,j-1)
+        bfs(sr,sc)
+        return image
+
+
+#Rotting oranges
+class Solution:
+    def orangesRotting(self, grid: List[List[int]]) -> int:
+        fresh = set()
+        rotton = set()
+        m = len(grid)
+        n = len(grid[0])
+        for i in range(m):
+            for j in range(n):
+                if grid[i][j] == 2:
+                    rotton.add((i,j))
+                elif grid[i][j] == 1:
+                    fresh.add((i, j)) 
+        mins = 0
+        dirs = [(1,0), (-1,0), (0,1), (0,-1)]
+        while len(fresh) > 0:
+            infected = set()
+            for r in rotton:
+                row = r[0]
+                col = r[1]
+                for dir in dirs:
+                    new_row = dir[0] + row
+                    new_col = dir[1] + col
+                    if (new_row, new_col) in fresh:
+                        fresh.remove((new_row, new_col))
+                        infected.add((new_row, new_col))   
+            if len(infected) == 0:
+                return -1
+            rotton = infected
+            mins += 1
+        return mins
